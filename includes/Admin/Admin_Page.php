@@ -23,12 +23,20 @@ class Admin_Page {
 	protected $admin_ajax;
 
 	/**
+	 * Capabliity.
+	 *
+	 * @since n.e.x.t
+	 */
+	protected $capability;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since n.e.x.t
 	 */
 	public function __construct() {
 		$this->admin_ajax = new Admin_AJAX( 'run-check-via-check-it-button' );
+		$this->capability = is_multisite() ? 'manage_network_plugins' : 'activate_plugins';
 	}
 
 	/**
@@ -64,7 +72,7 @@ class Admin_Page {
 				'settings.php',
 				__( 'Plugin Check', 'plugin-check' ),
 				__( 'Plugin Check', 'plugin-check' ),
-				'activate_plugins',
+				$this->capability,
 				'plugin-check',
 				array( $this, 'render_page' )
 			);
@@ -73,7 +81,7 @@ class Admin_Page {
 			$hook = add_management_page(
 				__( 'Plugin Check', 'plugin-check' ),
 				__( 'Plugin Check', 'plugin-check' ),
-				'activate_plugins',
+				$this->capability,
 				'plugin-check',
 				array( $this, 'render_page' )
 			);
@@ -158,7 +166,7 @@ class Admin_Page {
 	 */
 	public function filter_plugin_action_links( $actions, $plugin_file ) {
 
-		if ( current_user_can( 'activate_plugins' ) ) {
+		if ( current_user_can( $this->capability ) ) {
 
 			$url = admin_url( 'tools.php' );
 			if ( is_multisite() ) {
